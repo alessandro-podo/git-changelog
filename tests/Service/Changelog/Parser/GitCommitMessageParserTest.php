@@ -13,7 +13,7 @@ class GitCommitMessageParserTest extends TestCase
 {
     public function testParseWithoutBody(): void
     {
-        $parser = new GitCommitMessageParser(['composer']);
+        $parser = new GitCommitMessageParser(['composer'], 'dev');
 
         $result = $parser->parse('feat(composer): first', '39bc6761f1b6fffcffff62a81044b4be875ceeb9');
         self::assertSame(CommitType::FEAT, $result->type);
@@ -26,7 +26,7 @@ class GitCommitMessageParserTest extends TestCase
 
     public function testParseBreakingChange(): void
     {
-        $parser = new GitCommitMessageParser(['composer'],'dev');
+        $parser = new GitCommitMessageParser(['composer'], 'dev');
 
         $result = $parser->parse('feat(composer): first', '39bc6761f1b6fffcffff62a81044b4be875ceeb9');
         self::assertSame(CommitType::FEAT, $result->type);
@@ -39,7 +39,7 @@ class GitCommitMessageParserTest extends TestCase
 
     public function testParseWithoutBodyAndScope(): void
     {
-        $parser = new GitCommitMessageParser(['composer'],'dev');
+        $parser = new GitCommitMessageParser(['composer'], 'dev');
 
         $result = $parser->parse('feat: first', '39bc6761f1b6fffcffff62a81044b4be875ceeb9');
         self::assertSame(CommitType::FEAT, $result->type);
@@ -52,7 +52,7 @@ class GitCommitMessageParserTest extends TestCase
 
     public function testParseWithBody(): void
     {
-        $parser = new GitCommitMessageParser(['composer'],'dev');
+        $parser = new GitCommitMessageParser(['composer'], 'dev');
 
         $result = $parser->parse('feat(composer): add ux-icons
 
@@ -82,7 +82,7 @@ asd', $result->description);
 
     public function testParseWithWrongScope(): void
     {
-        $parser = new GitCommitMessageParser(['composer', 'schedule'],'dev');
+        $parser = new GitCommitMessageParser(['composer', 'schedule'], 'dev');
 
         $this->expectException(ParseException::class);
         $parser->parse('fix(wrong): first', '39bc6761f1b6fffcffff62a81044b4be875ceeb9');

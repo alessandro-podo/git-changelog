@@ -19,8 +19,7 @@ class HtmlRender implements RenderInterface
         private array $visibilityMapping,
     ) {}
 
-    /** @param ChangelogVersion[] $changelogVersions */
-    public function render(array $changelogVersions): string
+    public function render(array $changelogVersions, ?array $plannedChanges): string
     {
         $filteredChangelogVersions = [];
         foreach ($changelogVersions as $version) {
@@ -34,7 +33,7 @@ class HtmlRender implements RenderInterface
             $filteredChangelogVersions[] = new ChangelogVersion($version->version, $version->createdAt, $filteredChangelogItems);
         }
 
-        return $this->twig->render('@GitChangelogGenerator/changelog.html.twig', ['changelogVersions' => $filteredChangelogVersions]);
+        return $this->twig->render('@GitChangelogGenerator/changelog.html.twig', ['changelogVersions' => $filteredChangelogVersions, 'plannedChanges' => $plannedChanges]);
     }
 
     private function isAllowed(ChangelogItem $changelogItem): bool

@@ -1,6 +1,40 @@
+{% if plannedChanges is not null %}
+    <div class="row justify-content-md-center mb-5 ">
+        <div class="col-2">
+            <figure>
+                <blockquote class="blockquote">
+                    <p>Geplante Änderungen</p>
+                </blockquote>
+            </figure>
+        </div>
+        <div class="col-6 border-black border-start shadow-sm p-3">
+            {% for scope, changes in plannedChanges %}
+                <div class="display-5 mb-5">{{ scope }}</div>
+                <div class="ps-3">
+                    <ul class="list-unstyled">
+                    {% for change in changes %}
+                            <li class="mt-2">
+                                {{ change.type.icon }} {{ change.title }}
+                                {% if change.ready %}
+                                    ✅ <span class="text-muted">(wird im nächsten Release veröffentlicht)</span>
+                                {% endif %}
+                            </li>
+                            {% if  change.description is not null %}
+                                <br>
+                                <span>{{ change.description|nl2br }}</span>
+                            {% endif %}
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+                Keine Änderungen in Planung
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
 {% for changelogVersion in changelogVersions %}
     <div class="row justify-content-md-center mb-5 ">
-
         <div class="col-2">
             <figure>
                 <blockquote class="blockquote">
@@ -10,14 +44,13 @@
                     {{ changelogVersion.createdAt|date('d.m.Y') }}
                 </figcaption>
             </figure>
-
         </div>
         <div class="col-6 border-black border-start shadow-sm p-3">
 
             {% for scope, changelogItems in changelogVersion.getChangelogItemsGroupedByScope %}
                 <div class="display-5 mb-5">{{ scope }}</div>
                 <div class="ps-3">
-                    <ul>
+                    <ul class="list-unstyled">
                     {% for changelogItem in changelogItems %}
                             <li class="mt-2">{{ changelogItem.type.icon }} {{ changelogItem.title }}</li>
                             {% if  changelogItem.description is not null %}

@@ -11,6 +11,7 @@ use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Contract\ParserInterf
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Contract\RenderInterface;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Generator\YamlGenerator;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Parser\GitCommitMessageParser;
+use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Parser\PlannedChangesParser;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Parser\YamlParser;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Render\HtmlRender;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Util\GitCommands;
@@ -41,7 +42,13 @@ class GitChangelogGenerator extends AbstractBundle
 
         $root
             ->scalarNode('file')
-            ->defaultValue('/changelog.yml')
+            ->defaultValue('changelog.yml')
+            ->info('relativer Pfad zum Projektdir')
+            ->end()
+        ;
+        $root
+            ->scalarNode('plannedChangesFile')
+            ->defaultValue('plannedChanges.yml')
             ->info('relativer Pfad zum Projektdir')
             ->end()
         ;
@@ -77,6 +84,7 @@ class GitChangelogGenerator extends AbstractBundle
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
         $file = param('kernel.project_dir').\DIRECTORY_SEPARATOR.$config['file'];
+        $plannedChangesFile = param('kernel.project_dir').\DIRECTORY_SEPARATOR.$config['plannedChangesFile'];
 
         $container->services()
             ->set(BumpCommand::class)
@@ -89,6 +97,12 @@ class GitChangelogGenerator extends AbstractBundle
             ->set(Changelog::class)
             ->arg('$render', service(RenderInterface::class))
             ->arg('$parser', service(ParserInterface::class))
+            ->arg('$plannedChangesParser', service(PlannedChangesParser::class))
+        ;
+
+        $container->services()
+            ->set(PlannedChangesParser::class)
+            ->arg('$filename', $plannedChangesFile)
         ;
 
         $container->services()->set(HtmlRender::class)

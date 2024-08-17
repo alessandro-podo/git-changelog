@@ -2,7 +2,7 @@
     "name": "alessandro_podo/git-changelog-generator",
     "type": "symfony-bundle",
     "license": "MIT",
-    "description": "Es ist möglich aus einem Git Commit an hand von metadaten ein Changelog zu generieren, dass Leserechte hat",
+    "description": "Es ist möglich aus einem Git Commit anhand von metadaten ein Changelog zu generieren, dass Leserechte hat",
     "minimum-stability": "stable",
     "require": {
         "php": ">=8.2",
@@ -51,6 +51,10 @@
             "@rector",
             "@phpcsfixer",
             "@phpstan"
+        ],
+        "ci": [
+            "@check",
+            "phpunit tests"
         ]
     }
     }

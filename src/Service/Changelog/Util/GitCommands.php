@@ -7,7 +7,6 @@ namespace AlessandroPodo\GitChangelogGenerator\Service\Changelog\Util;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\dto\ChangelogItem;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Exception\RuntimeException;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Parser\GitCommitMessageParser;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Process;
 
 /**
@@ -20,7 +19,6 @@ class GitCommands
     public const DELIMITER_PARAMETER = '----------DELIMITER_PARAMETER---------';
 
     public function __construct(
-        private KernelInterface $kernel,
         private GitCommitMessageParser $gitCommitMessageParser,
         private string $filename,
     ) {}
@@ -36,7 +34,7 @@ class GitCommands
 
         $format = '%B'.self::DELIMITER_PARAMETER.'%H'.self::DELIMITER_MESSAGE;
 
-        $cmd = "git log --pretty=format:'".$format."' --abbrev-commit --no-merges ".$lastTag.'..HEAD';
+        $cmd = 'git log --pretty=format:'.$format.' --abbrev-commit --no-merges '.$lastTag.'..HEAD';
         $string = $this->process($cmd);
 
         $messages = explode(self::DELIMITER_MESSAGE, $string);
@@ -55,25 +53,25 @@ class GitCommands
 
     public function getLastTag(): string
     {
-        return $this->process("git -C '%path%' describe --tags --abbrev=0");
+        return $this->process('git describe --tags --abbrev=0');
     }
 
     public function add(string $file): void
     {
-        $this->process("git -C '%path%' add ".$file);
+        $this->process('git add '.$file);
     }
 
     public function commit(string $message): void
     {
         $message = str_replace('"', "'", $message); // Escape
-        $cmd = 'git -C \'%path%\' commit -m "'.$message.'"';
+        $cmd = 'git commit -m "'.$message.'"';
 
         $this->process($cmd);
     }
 
     public function tag(string $version): void
     {
-        $cmd = "git -C '%path%' tag ".$version;
+        $cmd = 'git tag '.$version;
 
         $this->process($cmd);
     }
@@ -88,8 +86,6 @@ class GitCommands
 
     private function process(string $cmd): string
     {
-        $cmd = str_replace('%path%', $this->kernel->getProjectDir(), $cmd);
-
         $process = Process::fromShellCommandline($cmd);
         $process->run();
 

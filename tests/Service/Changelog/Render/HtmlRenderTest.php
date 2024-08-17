@@ -29,7 +29,7 @@ class HtmlRenderTest extends TestCase
         $changelogItem = new ChangelogItem('asd', 'ROLE_NEVER', 'Titel no', null, 'Component', CommitType::FEAT, false);
         $changelogVersion = new ChangelogVersion('1.3.4', new DateTimeImmutable('01.08.2024'), [$changelogItem]);
 
-        $html = $render->render([$changelogVersion]);
+        $html = $render->render([$changelogVersion], null);
 
         self::assertStringContainsStringIgnoringCase('internes Release', $html);
         self::assertStringNotContainsStringIgnoringCase('Titel no', $html);
@@ -48,7 +48,7 @@ class HtmlRenderTest extends TestCase
         $changelogItem = new ChangelogItem('asd', 'intern', 'Titel no', null, 'Component', CommitType::FEAT, false);
         $changelogVersion = new ChangelogVersion('1.3.4', new DateTimeImmutable('01.08.2024'), [$changelogItem]);
 
-        $html = $render->render([$changelogVersion]);
+        $html = $render->render([$changelogVersion], null);
 
         self::assertStringContainsStringIgnoringCase('Titel no', $html);
         self::assertStringNotContainsStringIgnoringCase('internes Release', $html);

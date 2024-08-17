@@ -59,3 +59,19 @@ public function change(
     {{ content|raw }}
 {% endblock %}
 ```
+
+### Einstellungen
+
+```yaml
+# Dateiname kann unten den Optionen angepasst werden. Default ist: plannedChangesFile.yml
+composer:
+    -
+        title: Composer
+        description: Composer
+        ready: false
+        type: refactor
+```
+
+Damit werden geplante Änderungen aufgeführt.
+Ist das File leer, wird angezeigt, dass keine Änderungen geplant sind. 
+Gibt es das File nicht, wird nichts angezeigt
