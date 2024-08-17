@@ -1,0 +1,56 @@
+{
+    "name": "alessandro_podo/git-changelog-generator",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "description": "Es ist möglich aus einem Git Commit an hand von metadaten ein Changelog zu generieren, dass Leserechte hat",
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=8.2",
+        "symfony/clock": "^7.1",
+        "symfony/console": "^7.1",
+        "symfony/framework-bundle": "^7.1",
+        "symfony/process": "^7.1",
+        "symfony/security-bundle": "^7.1",
+        "symfony/twig-bundle": "^7.1",
+        "symfony/yaml": "^7.1",
+        "webmozart/assert": "^1.11"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "AlessandroPodo\\GitChangelogGenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AlessandroPodo\\GitChangelogGenerator\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "ekino/phpstan-banned-code": "^2.0",
+        "friendsofphp/php-cs-fixer": "^3.62",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^1.11",
+        "phpstan/phpstan-symfony": "^1.4",
+        "phpunit/phpunit": "^11.3",
+        "rector/rector": "^1.2",
+        "symplify/phpstan-rules": "^13.0",
+        "tomasvotruba/cognitive-complexity": "^0.2.3",
+        "symfony/dom-crawler": "^7.1"
+    },
+    "scripts": {
+        "phpcsfixer": "php-cs-fixer fix -v --config=.php-cs-fixer.dist.php",
+        "phpstan": "phpstan analyse -v",
+        "rector": "rector",
+        "check": [
+            "@rector",
+            "@phpcsfixer",
+            "@phpstan"
+        ]
+    }
+    }

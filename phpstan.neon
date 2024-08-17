@@ -1,0 +1,28 @@
+parameters:
+    level: 9
+    paths:
+        - src
+    reportUnmatchedIgnoredErrors: true
+    excludePaths:
+        - 'src/*/Test*.php'
+    treatPhpDocTypesAsCertain: false #weil PHPDoc mir zu unsicher ist
+    cognitive_complexity:
+        class: 50
+        function: 10
+
+    # This checks are disabled by default
+    checkInternalClassCaseSensitivity: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkMissingCallableSignature: true
+    # checkImplicitMixed: true # sehr streng
+    checkBenevolentUnionTypes: true
+
+    ignoreErrors:
+        - '#Setter method cannot return anything, only set value#' #use fluent setter
+
+
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/symplify/phpstan-rules/config/static-rules.neon
+    - vendor/symplify/phpstan-rules/config/naming-rules.neon
+    - vendor/symplify/phpstan-rules/config/regex-rules.neon

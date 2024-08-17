@@ -1,0 +1,35 @@
+{% for changelogVersion in changelogVersions %}
+    <div class="row justify-content-md-center mb-5 ">
+
+        <div class="col-2">
+            <figure>
+                <blockquote class="blockquote">
+                    <p>{{ changelogVersion.version }}</p>
+                </blockquote>
+                <figcaption class="blockquote-footer">
+                    {{ changelogVersion.createdAt|date('d.m.Y') }}
+                </figcaption>
+            </figure>
+
+        </div>
+        <div class="col-6 border-black border-start shadow-sm p-3">
+
+            {% for scope, changelogItems in changelogVersion.getChangelogItemsGroupedByScope %}
+                <div class="display-5 mb-5">{{ scope }}</div>
+                <div class="ps-3">
+                    <ul>
+                    {% for changelogItem in changelogItems %}
+                            <li class="mt-2">{{ changelogItem.type.icon }} {{ changelogItem.title }}</li>
+                            {% if  changelogItem.description is not null %}
+                                <br>
+                                <span>{{ changelogItem.description|nl2br }}</span>
+                            {% endif %}
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+                Das war ein internes Release, ohne Changes die Sie betreffen
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
