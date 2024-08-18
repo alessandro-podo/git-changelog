@@ -123,7 +123,6 @@ class GitChangelogGenerator extends AbstractBundle
         ;
 
         $container->services()->set(GitCommands::class)
-            ->arg('$kernel', service(KernelInterface::class))
             ->arg('$gitCommitMessageParser', service(GitCommitMessageParser::class))
             ->arg('$filename', basename($file))
         ;
