@@ -75,3 +75,9 @@ composer:
 Damit werden geplante Änderungen aufgeführt.
 Ist das File leer, wird angezeigt, dass keine Änderungen geplant sind. 
 Gibt es das File nicht, wird nichts angezeigt
+
+### CommitMessage
+
+* Wenn im Footer `title:` enthalten ist, dann wird dieser genutzt
+* Wenn im Footer `description:` enthalten ist, dann wird dieser genutzt
+* Wenn im Footer `visibility:`/`v:` enthalten ist, dann wird dieser genutzt, sonst wird der Default aus dem ConfigFile genutzt

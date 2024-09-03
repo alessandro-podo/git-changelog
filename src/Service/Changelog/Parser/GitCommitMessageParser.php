@@ -64,7 +64,15 @@ class GitCommitMessageParser
             $description = null;
         }
 
-        $visibilityCode = $footers['visibility'] ?? $this->defaultVisibility;
+        $visibilityCode = $footers['v'] ?? $footers['visibility'] ?? $this->defaultVisibility;
+
+        if (\array_key_exists('title', $footers)) {
+            $title = trim($footers['title']);
+        }
+
+        if (\array_key_exists('description', $footers)) {
+            $description = trim($footers['description']);
+        }
 
         return new ChangelogItem(
             $hash,

@@ -80,6 +80,32 @@ asd', $result->description);
         self::assertSame('add ux-icons', $result->title);
     }
 
+    public function testParseWithDifferentTitleAndDescription(): void
+    {
+        $parser = new GitCommitMessageParser(['composer'], 'dev');
+
+        $result = $parser->parse('feat(composer): add ux-icons
+
+
+das istder Body
+
+auch mulitline gehört dazu
+
+
+asd
+
+
+v: intern
+title: anderer Title
+description: das ist eine andere Beschreibung
+ROLE2: intern2', '4bb1bc67b4014f81d945a7897f169ffb5d68e267');
+        self::assertSame(CommitType::FEAT, $result->type);
+        self::assertSame('composer', $result->scope);
+        self::assertSame('intern', $result->visibilityCode);
+        self::assertSame('das ist eine andere Beschreibung', $result->description);
+        self::assertSame('anderer Title', $result->title);
+    }
+
     public function testParseWithWrongScope(): void
     {
         $parser = new GitCommitMessageParser(['composer', 'schedule'], 'dev');
