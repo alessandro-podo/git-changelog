@@ -63,10 +63,13 @@ class GitCommands
 
     public function commit(string $message): void
     {
-        $message = str_replace('"', "'", $message); // Escape
-        $cmd = 'git commit -m "'.$message.'"';
+        $escapeshellarg = mb_substr(escapeshellarg($message), 1, -1);
+        $process = new Process(['git', 'commit', '-m', $escapeshellarg]);
+        $process->run();
 
-        $this->process($cmd);
+        if (!$process->isSuccessful()) {
+            throw new RuntimeException(\sprintf('Beim ausführen von `%s` kam es zu folgendem Fehler: `%s`', $process->getCommandLine(), $process->getErrorOutput()));
+        }
     }
 
     public function tag(string $version): void
