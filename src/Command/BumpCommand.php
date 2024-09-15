@@ -12,6 +12,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 
 #[AsCommand(name: 'changelog:bump', description: 'Erzeugt die Changelog.yml und legt ein neues Release an')]
 class BumpCommand extends Command
@@ -28,7 +29,14 @@ class BumpCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         // version herausfinden
-        $changes = $this->gitCommands->getCommitSinceLastTag();
+        try {
+            $changes = $this->gitCommands->getCommitSinceLastTag();
+        } catch (Throwable $throwable) {
+            $io->error($throwable->getMessage());
+
+            return Command::FAILURE;
+        }
+
         $version = new SemVersion($this->gitCommands->getLastTag());
         $newSemVer = $version->findNewSemVer($changes);
         $nextVersion = $version->bump($newSemVer);
