@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AlessandroPodo\GitChangelogGenerator;
 
 use AlessandroPodo\GitChangelogGenerator\Command\BumpCommand;
+use AlessandroPodo\GitChangelogGenerator\Command\CommitCommand;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Changelog;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Contract\GeneratorInterface;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Contract\ParserInterface;
@@ -89,6 +90,14 @@ class GitChangelogGenerator extends AbstractBundle
             ->set(BumpCommand::class)
             ->arg('$yamlGenerator', service(YamlGenerator::class))
             ->arg('$gitCommands', service(GitCommands::class))
+            ->tag('console.command')
+        ;
+
+        $container->services()
+            ->set(CommitCommand::class)
+            ->arg('$gitCommands', service(GitCommands::class))
+            ->arg('$visibilityMapping', $config['validateMapping'])
+            ->arg('$validScopes', $config['scopes'])
             ->tag('console.command')
         ;
 
