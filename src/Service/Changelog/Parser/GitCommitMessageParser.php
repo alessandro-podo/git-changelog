@@ -54,7 +54,7 @@ class GitCommitMessageParser
             foreach ($matchesBody as $match) {
                 $body = str_replace($match[0], '', $body);
 
-                $value = ltrim((string) $match['value'], ':');
+                $value = ltrim($match['value'], ':');
                 $footers[$match['token']] = $value;
             }
         }
