@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AlessandroPodo\GitChangelogGenerator\Command;
 
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Enum\CommitType;
+use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Parser\GitCommitMessageParser;
 use AlessandroPodo\GitChangelogGenerator\Service\Changelog\Util\GitCommands;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -13,6 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 use Webmozart\Assert\Assert;
 
 #[AsCommand(name: 'changelog:commit', description: 'Erzeugt die Changelog.yml und legt ein neues Release an')]
@@ -22,6 +24,7 @@ class CommitCommand extends Command
 
     public function __construct(
         private GitCommands $gitCommands,
+        private GitCommitMessageParser $gitCommitMessageParser,
         /** @var array<string,list<string>> $visibilityMapping */
         private array $visibilityMapping,
         /** @var string[] $validScopes */
@@ -87,12 +90,47 @@ class CommitCommand extends Command
 
     private function auswahlScope(SymfonyStyle $io): string
     {
+        // get all changed Files
+        $changedFiles = $this->gitCommands->findChangedFiles();
+        // get old commits for changed Files
+        $commits = [];
+        foreach ($changedFiles as $changedFile) {
+            $commits = [...$commits, ...$this->gitCommands->findLastCommitsByFile($changedFile)];
+        }
+
+        // get scope from old commits
+        $choices = [];
+        $choices[] = 'other';
+        foreach ($commits as $commit) {
+            try {
+                $choices[] = $this->gitCommitMessageParser->parse($commit, 'hash')->scope ?? 'none';
+            } catch (Throwable) {
+                // ignore
+            }
+        }
+
+        $choices = array_unique($choices);
+
         $question = new ChoiceQuestion(
             'Welchen Scope soll es haben?',
-            ['none', ...$this->validScopes],
+            $choices,
         );
         $question->setErrorMessage('Scope %s is invalid.');
-        $question->setAutocompleterValues(['none', ...$this->validScopes]);
+        $question->setAutocompleterValues($choices);
+
+        $answer = $io->askQuestion($question);
+        Assert::string($answer);
+        if ('other' !== $answer) {
+            return $answer;
+        }
+
+        $choices = ['none', ...$this->validScopes];
+        $question = new ChoiceQuestion(
+            'Welchen Scope soll es haben?',
+            $choices,
+        );
+        $question->setErrorMessage('Scope %s is invalid.');
+        $question->setAutocompleterValues($choices);
 
         $answer = $io->askQuestion($question);
         Assert::string($answer);
@@ -129,7 +167,7 @@ class CommitCommand extends Command
         return $answer;
     }
 
-    private function createCommitMessage(string $scope, string $visibility, string $title, string $commitType, string $commitMsg): void
+    private function createCommitMessage(string $scope, string $visibility, ?string $title, string $commitType, string $commitMsg): void
     {
         $scopeStr = null;
         if ('none' !== $scope) {
@@ -141,7 +179,10 @@ class CommitCommand extends Command
             $visibilityStr = "\nv: ".$visibility;
         }
 
-        $titleStr = "\ntitle: ".$title;
+        $titleStr = null;
+        if (null !== $title) {
+            $titleStr = "\ntitle: ".$title;
+        }
 
         $this->commitMessage = $commitType.$scopeStr.': '.$commitMsg."\n".$visibilityStr.$titleStr;
     }

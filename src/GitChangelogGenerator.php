@@ -96,6 +96,7 @@ class GitChangelogGenerator extends AbstractBundle
         $container->services()
             ->set(CommitCommand::class)
             ->arg('$gitCommands', service(GitCommands::class))
+            ->arg('$gitCommitMessageParser', service(GitCommitMessageParser::class))
             ->arg('$visibilityMapping', $config['validateMapping'])
             ->arg('$validScopes', $config['scopes'])
             ->tag('console.command')

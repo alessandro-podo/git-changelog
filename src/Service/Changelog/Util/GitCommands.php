@@ -87,6 +87,35 @@ class GitCommands
         $this->tag('v'.$version);
     }
 
+    /**
+     * @return string[]
+     *
+     * @throws RuntimeException
+     */
+    public function findChangedFiles(): array
+    {
+        $output = $this->process('git status --porcelain');
+
+        $files = [];
+        foreach (explode("\n", $output) as $line) {
+            $files[] = trim(mb_substr($line, 3));
+        }
+
+        return $files;
+    }
+
+    /**
+     * @return string[]
+     *
+     * @throws RuntimeException
+     */
+    public function findLastCommitsByFile(string $file): array
+    {
+        $output = $this->process('git log --follow --pretty=format:"%s" -- '.$file);
+
+        return explode("\n", $output);
+    }
+
     private function process(string $cmd): string
     {
         $process = Process::fromShellCommandline($cmd);
